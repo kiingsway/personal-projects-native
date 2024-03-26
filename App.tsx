@@ -1,20 +1,23 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { SafeAreaView, StyleSheet } from 'react-native';
+import Gallery from './pages/Gallery';
+import { RootSiblingParent } from 'react-native-root-siblings';
 
-export default function App() {
+export default function App(): React.JSX.Element {
   return (
-    <View style={styles.container}>
-      <Text>Open up App.tsx to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <SafeAreaView style={styles.container}>
+      <RootSiblingParent>
+        <Gallery />
+      </RootSiblingParent>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#1A1A1A',
     alignItems: 'center',
-    justifyContent: 'center',
+    width: '100%',
+    display: 'flex',
   },
 });
