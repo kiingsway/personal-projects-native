@@ -11,6 +11,8 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import Toast from 'react-native-root-toast';
 import useBoolean from '../../scripts/hooks/useBoolean';
 import AnotherGallery from './AnotherGallery';
+import useSWR from 'swr';
+import { IGalleryContext } from '../../interfaces';
 
 type TTabNames = 'Gallery1' | 'Gallery2';
 
@@ -27,6 +29,8 @@ const tabs: ITab[] = [
   },
 ];
 
+export const GalleryContext = React.createContext<IGalleryContext | undefined>(undefined);
+
 export default function Gallery(): React.JSX.Element {
 
   const [albums, setAlbums] = useState<MediaLibrary.Album[]>();
@@ -34,6 +38,9 @@ export default function Gallery(): React.JSX.Element {
   const [selectedAlbum, selectAlbum] = useState<MediaLibrary.Album>();
   const [menuModal, { setTrue: openMenu, setFalse: closeMenu }] = useBoolean();
 
+  const swrOpt = { revalidateOnMount: true, refreshInterval: 5 * 60 * 1000, revalidateOnFocus: false }
+  const { data: assetAlbums, error: errorAssetAlbum, mutate: updateAlbumsAssets } = useSWR("AssetAlbums", getAlbums, swrOpt);
+  console.log('assetAlbums', assetAlbums);
   const [tab, setTab] = useState<ITab>(tabs[0]);
 
   const handleAlbums = (): Promise<boolean> => {
@@ -74,7 +81,7 @@ export default function Gallery(): React.JSX.Element {
 
   const Main = (): JSX.Element => {
     if (!albums) return <></>;
-    if (selectedAlbum) return <AlbumImages album={selectedAlbum} handleAlbums={handleAlbums} goHome={goHome} />;
+    // if (selectedAlbum) return <AlbumImages album={selectedAlbum} handleAlbums={handleAlbums} goHome={goHome} />;
     if (tab.title === 'Gallery1') return (
       <>
         <FlatList
@@ -92,10 +99,14 @@ export default function Gallery(): React.JSX.Element {
     return <Text>Nenhuma guia selecionada... Isso não deveria ter acontecido</Text>;
   }
 
+  if (!assetAlbums) return <></>;
+
   return (
     <View style={styles.container}>
       <AlbumTitleLength />
-      <Main />
+      <GalleryContext.Provider value={{ assetAlbums }}>
+        <Main />
+      </GalleryContext.Provider>
 
       <Modal
         animationType="slide"
@@ -103,12 +114,13 @@ export default function Gallery(): React.JSX.Element {
         visible={menuModal}
         onRequestClose={closeMenu}>
         <View style={styles.centeredView}>
+
           <View style={styles.modal}>
-            <Pressable
-              style={[styles.button, styles.buttonClose]}
-              onPress={closeMenu}>
+
+            <Pressable style={styles.button} onPress={closeMenu}>
               <Ionicons name="close" size={24} color="rgb(0,0,0)" />
             </Pressable>
+
             <View style={styles.modalView}>
               {tabs.map(tab => {
                 const onPress = () => {
@@ -118,14 +130,14 @@ export default function Gallery(): React.JSX.Element {
                 return (
                   <TouchableOpacity
                     key={tab.title}
-                    style={[styles.tab_button]}
+                    style={styles.tab_button}
                     onPress={onPress}>
-                    {/* <Ionicons name="close" size={24} color="rgb(0,0,0)" /> */}
                     <NativeText style={{ fontSize: 24, fontWeight: '600' }}>{tab.title}</NativeText>
                   </TouchableOpacity>
                 );
               })}
             </View>
+
           </View>
         </View>
       </Modal>
@@ -166,7 +178,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     height: 50,
     borderRadius: 4,
-    backgroundColor: 'rgba(10,75,255, 0.3)',
+    backgroundColor: 'rgba(10, 75, 255, 0.3)',
     paddingLeft: 10,
   },
   centeredView: {
@@ -201,14 +213,7 @@ const styles = StyleSheet.create({
     elevation: 2,
     position: 'relative',
     top: 0,
-    // right: 0,
     width: 44,
-  },
-  buttonOpen: {
-    // backgroundColor: '#F194FF',
-  },
-  buttonClose: {
-    // backgroundColor: '#2196F3',
   },
   textStyle: {
     color: 'white',

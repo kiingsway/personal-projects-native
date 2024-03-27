@@ -34,6 +34,14 @@
           "savePhotosPermission": "Allow $(PRODUCT_NAME) to save photos.",
           "isAccessMediaLocationEnabled": true
         }
+      ],
+      [
+        "expo-font",
+        {
+          "fonts": [
+            "Jost-Regular.ttf"
+          ]
+        }
       ]
     ]
   }

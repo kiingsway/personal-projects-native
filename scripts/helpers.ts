@@ -51,9 +51,18 @@ export const friendlySizeText = (size?: number): string => {
 
 export const friendlySeconds = (seconds?: number): string => {
   if (!seconds && seconds !== 0) return "";
-  const min = Math.floor(seconds / 60);
-  const secsLeft = seconds % 60;
-  const formattedMin = min < 10 ? `0${min}` : min;
-  const formattedSec = secsLeft < 10 ? `0${secsLeft}` : secsLeft;
-  return `${formattedMin}:${formattedSec}`;
+  const time = [seconds / 60, seconds % 60].map(Math.floor);
+  const [min, sec] = time.map(t => t.toString().padStart(2, '0'));
+  return `${min}:${sec}`;
 }
+
+export const formatDateTimeByTimestamp = (timestamp: number): string => {
+  const date = new Date(timestamp);
+  
+  const d = String(date.getDate()).padStart(2, '0');
+  const M = String(date.getMonth() + 1).padStart(2, '0');
+  const y = String(date.getFullYear());
+  const h = String(date.getHours()).padStart(2, '0');
+  const m = String(date.getMinutes()).padStart(2, '0');
+  return `${d}/${M}/${y} ${h}:${m}`;
+};

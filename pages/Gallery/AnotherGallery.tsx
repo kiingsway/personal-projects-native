@@ -62,12 +62,10 @@ export default function AnotherGallery(): JSX.Element {
         <Text style={{ fontSize: 24 }}>{assets.length} itens obtidos</Text>
       </View>
       <FlatList
-        // contentContainerStyle={styles.list}
         data={assets}
         renderItem={({ item }) => <AssetItem key={item.id} asset={item} />}
         keyExtractor={item => item.id}
       />
-      {/* {assets.map(asset => <AssetItem key={asset.id} asset={asset} />)} */}
     </View>
   );
 }

@@ -32,7 +32,6 @@ export default function AssetItem({ asset, onDeletePress, onSharePress, selected
       Linking.openURL(assetURI)
         .catch(e => {
           Toast.show(`❌ ${e?.message || `Erro ao abrir link: ${assetURI}`}`, { duration: Toast.durations.SHORT, });
-          // console.error(e);
         });
     } catch (e) {
       Toast.show(`❌ ${`Erro ao abrir link: ${assetURI}`}`, { duration: Toast.durations.SHORT, });
@@ -51,7 +50,7 @@ export default function AssetItem({ asset, onDeletePress, onSharePress, selected
         <View style={styles.item_details}>
           <Text style={styles.item_title}>{asset.filename}</Text>
           {asset.size ? <Text style={styles.item_size}>{friendlySizeText(asset.size)}</Text> : <></>}
-          <Text style={styles.item_size}>{friendlySeconds(asset.duration).split('.').slice(0, 1)}</Text>
+          <Text style={styles.item_size}>{friendlySeconds(asset.duration)}</Text>
         </View>
       </TouchableOpacity>
 
