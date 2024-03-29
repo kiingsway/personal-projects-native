@@ -1,11 +1,12 @@
 {
   "expo": {
     "name": "personal-projects-native",
-    "slug": "personal-projects-native",
+    "slug": "personal-projects",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
+    "scheme": "personalprojects",
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
@@ -15,15 +16,25 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "infoPlist": {
+        "NSPhotoLibraryUsageDescription": "Allow $(PRODUCT_NAME) to access your photos.",
+        "NSPhotoLibraryAddUsageDescription": "Allow $(PRODUCT_NAME) to save photos."
+      }
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "permissions": [
+        "android.permission.READ_EXTERNAL_STORAGE",
+        "android.permission.WRITE_EXTERNAL_STORAGE",
+        "android.permission.ACCESS_MEDIA_LOCATION"
+      ]
     },
     "web": {
+      "bundler": "metro",
       "favicon": "./assets/favicon.png"
     },
     "plugins": [
@@ -42,7 +53,20 @@
             "Jost-Regular.ttf"
           ]
         }
-      ]
-    ]
+      ],
+      "expo-router"
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "06be61a1-c2e4-4f4a-8af8-fe5bb2f79c28"
+      }
+    },
+    "owner": "kiingsway",
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/06be61a1-c2e4-4f4a-8af8-fe5bb2f79c28"
+    }
   }
 }
