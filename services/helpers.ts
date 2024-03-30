@@ -45,6 +45,10 @@ export function padding(value: string): IPaddingStyles {
   return paddingStyles;
 };
 
+export function onlyUnique<T>(value: T, index: number, self: T[]): boolean {
+  return self.indexOf(value) === index;
+}
+
 export const formatNumber = (n: number): string => {
   // Verifica se o argumento é um número válido
   if (typeof n !== 'number' || isNaN(n)) return 'NaN';

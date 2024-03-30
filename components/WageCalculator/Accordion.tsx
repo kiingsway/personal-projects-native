@@ -43,7 +43,7 @@ const Header = ({ isActive, title, header }: { title?: String, isActive: boolean
   return (
     <View style={styles.accordHeader}>
       {!title ? <></> : <Text style={styles.accordTitle}>{title}</Text>}
-      <Icon name={iconName} size={20} color="" />
+      <Icon name={iconName} size={20} />
     </View>
   );
 }
