@@ -65,3 +65,11 @@ export const formatNumber = (n: number): string => {
   // Retorna o número formatado
   return `${formattedIntegerPart}.${decimalPart}`;
 };
+
+type TTexts = string | number | React.Key | null | undefined;
+export function capitalize(text: TTexts): string {
+  const txt = String(text);
+  if (txt.length <= 1) return txt.length ? txt.toUpperCase() : "";
+  const [initial, ...rest] = txt;
+  return `${initial.toUpperCase()}${rest.join('')}`;
+}

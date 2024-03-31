@@ -1,6 +1,7 @@
 import { Asset } from 'expo-media-library';
 import React from 'react';
-import { Modal, View, Image, StyleSheet, Dimensions, TouchableOpacity, Text, ScrollView, FlatList } from 'react-native';
+import { Modal, View, Image, StyleSheet, Dimensions, TouchableOpacity, Text, Button, FlatList } from 'react-native';
+import { Video, ResizeMode } from 'expo-av';
 
 interface Props {
   open: boolean;
@@ -15,11 +16,12 @@ const ModalImagem = ({ open, filteredAssets, index, selectAsset }: Props) => {
 
   const renderItem = ({ item }: { item: Asset }) => {
 
-    const { id, uri } = item;
+    const { id, uri, mediaType } = item;
+    const isVideo = mediaType === 'video';
 
     return (
       <View key={id} style={styles.imagemContainer}>
-        <Image source={{ uri }} style={styles.imagem} />
+        {isVideo ? <Image source={{ uri }} style={styles.imagem} /> : <Image source={{ uri }} style={styles.imagem} />}
       </View>
     );
   };
@@ -27,7 +29,7 @@ const ModalImagem = ({ open, filteredAssets, index, selectAsset }: Props) => {
   const onClose = () => selectAsset(undefined);
 
   const contentOffset = {
-    x: width * (index ),
+    x: width * (index),
     y: 0,
   };
 
@@ -39,7 +41,7 @@ const ModalImagem = ({ open, filteredAssets, index, selectAsset }: Props) => {
           data={filteredAssets}
           renderItem={renderItem}
           pagingEnabled
-          initialNumToRender={index+1}
+          initialNumToRender={index + 1}
           maxToRenderPerBatch={5}
           horizontal
           contentOffset={contentOffset}
@@ -84,6 +86,21 @@ const styles = StyleSheet.create({
     color: '#000',
     fontSize: 16,
     fontWeight: 'bold',
+  },
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    backgroundColor: '#ecf0f1',
+  },
+  video: {
+    alignSelf: 'center',
+    width: 320,
+    height: 200,
+  },
+  buttons: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
 

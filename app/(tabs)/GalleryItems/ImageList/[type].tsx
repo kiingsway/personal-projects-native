@@ -1,24 +1,44 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, SafeAreaView, StyleSheet, TouchableHighlight } from 'react-native';
+import { Alert, SafeAreaView } from 'react-native';
 import { Link, useLocalSearchParams, useNavigation } from 'expo-router';
 import { AssetsProvider, useAssets } from '../../../../services/hooks/useAssets';
 import getGalleryTypes from '../../../../components/Gallery/galleryTypes';
 import IonIcon from 'react-native-vector-icons/Ionicons';
 import GalleryImages from '../../../../components/Gallery/GalleryImages';
-import { padding } from '../../../../services/helpers';
-
+import AlbumHeader from '../../../../components/Gallery/AlbumHeader';
+import { Button } from '../../../../components/Gallery/Button';
+import { Asset } from 'expo-media-library';
+import DeleteSelected from '../../../../components/Gallery/DeleteSelected';
+import { confirmDelete } from '../../../../services/requests';
+import { IAppFilters, IGalleryConfig } from '../interfaces';
+import useGalleryConfig from '../../../../services/hooks/useGalleryConfig';
 export default function Type(): JSX.Element {
 
   const Main = () => {
 
     const nav = useNavigation();
-    const { assets, loading } = useAssets();
+    const configState = useGalleryConfig();
+    const [assetIdsToDelete, setAssetIdsToDelete] = React.useState<Asset['id'][]>();
+    const { assets, updateAssets } = useAssets();
     const { type: typeData } = useLocalSearchParams();
 
     React.useLayoutEffect(() => {
       const title = `${galleryType?.title || `Gallery Items`} (${filteredAssets.length} itens)`
       nav.setOptions({ title, headerShown: false });
     }, []);
+
+    const toggleAsset = (newAssetId: Asset['id']) => {
+      setAssetIdsToDelete(prev => {
+        // Se não tiver nada selecionado, adicione o newAssetId.
+        if (!prev) return [newAssetId];
+
+        // Se o state já tiver o assetId, remova o newAssetId.
+        if (prev.includes(newAssetId)) return prev.filter(p => p !== newAssetId);
+
+        // Retorne o estado antigo com o newAssetId.
+        return [...prev, newAssetId];
+      })
+    };
 
     if (!typeData) throw new Error('Não há type');
 
@@ -28,21 +48,47 @@ export default function Type(): JSX.Element {
 
     const galleryType = getGalleryTypes(filteredAssets).find(g => g.type === type);
 
+    const selectedAssets = assetIdsToDelete?.map(id => filteredAssets.find(a => a.id === id)).filter(Boolean) as Asset[] | undefined;
+
+    const onDeletePress = () => {
+      if (!selectedAssets || !selectedAssets.length) return;
+      confirmDelete(selectedAssets).then(v => {
+        if (v === 'deleted') {
+          updateAssets();
+          setAssetIdsToDelete(undefined);
+        }
+      });
+    }
+
     return (
-      <SafeAreaView>
-        <Link href="/GalleryItems" asChild>
-          <TouchableOpacity>
-            <View style={styles.header_back}>
-              <IonIcon name='chevron-back' size={26} color="#007AFF" />
-              <Text style={styles.button_back}>Back to Albums</Text>
-            </View>
-          </TouchableOpacity>
-        </Link>
-        <View style={styles.header_page}>
-          <Text style={styles.header_title}>{galleryType?.title}</Text>
-          <Text style={styles.header_subtitle}>{filteredAssets.length} itens</Text>
-        </View>
-        <GalleryImages filteredAssets={filteredAssets} />
+      <SafeAreaView style={{ height: '100%' }}>
+
+        <BackButton />
+
+        <AlbumHeader
+        configState={configState}
+          // config={config}
+          // changeView={changeView}
+          // filters={filters}
+          // setFilters={setFilters}
+          selectedAssets={assetIdsToDelete}
+          title={galleryType?.title}
+          lengthItems={filteredAssets.length}
+          selectAssets={setAssetIdsToDelete} />
+
+        <GalleryImages
+          toggleAsset={toggleAsset}
+          selectedAssets={assetIdsToDelete}
+          filteredAssets={filteredAssets}
+          selectMode={Array.isArray(assetIdsToDelete)}
+        />
+
+        <DeleteSelected
+          onPress={onDeletePress}
+          selectedAssets={assetIdsToDelete}
+          updateAssets={updateAssets}
+          selectAssets={setAssetIdsToDelete} />
+
       </SafeAreaView>
     );
   }
@@ -50,31 +96,8 @@ export default function Type(): JSX.Element {
   return <AssetsProvider><Main /></AssetsProvider>;
 }
 
-const styles = StyleSheet.create({
-  header_back: {
-    paddingLeft: 6,
-    height: 40,
-    flexDirection: 'row',
-    alignItems: 'center'
-  },
-  header_page: {
-    flexDirection: 'row',
-    alignItems: 'flex-end',
-    justifyContent: 'flex-start',
-    ...padding("0 0 6px 32px"),
-    gap: 6
-  },
-  button_back: {
-    fontSize: 20,
-    color: "#007AFF"
-  },
-  header_title: {
-    fontSize: 32,
-    fontWeight: '500',
-    textAlign: 'center'
-  },
-  header_subtitle: {
-    fontSize: 12,
-    paddingBottom: 3,
-  }
-});
+const BackButton = () => (
+  <Link href="(tabs)/GalleryItems" asChild>
+    <Button title="Back to Albums" fontSize={20} icon={<IonIcon name='chevron-back' size={26} color="#007AFF" />} />
+  </Link>
+);
