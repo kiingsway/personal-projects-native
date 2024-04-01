@@ -16,9 +16,9 @@ export default function Layout() {
     { key: "(tabs)/GalleryItems/index", title: "Gallery Items" },
     { key: "(tabs)/GalleryItems/ImageList/[type]", title: "Gallery Items", hide: true, },
     { key: "(tabs)/GalleryItems2", title: "Gallery Items 2.0", hide: true },
+    { key: "(tabs)/OntarioDriversHandbook/index", title: "Ontario Drivers Handbook" },
+    { key: "(tabs)/OntarioDriversHandbook/LearnPage/[section]", title: "Ontario Drivers Handbook", hide: true, },
   ];
-
-  const initialRouteName = tabs.slice(-1)[0].key;
 
   return (
     <PaperProvider>

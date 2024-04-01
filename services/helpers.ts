@@ -73,3 +73,13 @@ export function capitalize(text: TTexts): string {
   const [initial, ...rest] = txt;
   return `${initial.toUpperCase()}${rest.join('')}`;
 }
+
+export function rawText(text?: string | number): string {
+  // Textos em minúsculo e sem acento.
+  if (!text) return "";
+  return String(text).normalize('NFKD').replace(/[\u0300-\u036f]/g, "").toLowerCase();
+}
+
+export function makeKey(txt?: string | number): string {
+  return rawText(txt).replace(/[^a-zA-Z0-9\s-]/g, '').replaceAll(' ', '-');
+}
